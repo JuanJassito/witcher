@@ -4,8 +4,22 @@ class Game{
 
 }
 
-class Word{
+enum Difficulty{
+    Easy
+    Medium
+    Hard
+}
 
+class WordGenerator{
+    +Generate(Difficulty) : Word
+}
+
+class Word{
+    - difficulty:Difficulty
+    - content:String
+    + GetLenght() : int
+    + GetWord() : string
+    + HaveLetter(char) : int[]
 }
 
 class Player{
@@ -13,22 +27,27 @@ class Player{
 }
 
 class Accused{
+    - sprite : Sprite
 
 }
 
-class Draw{
-
+class Sprite{
+    - currentFrame : int
+    - frames : Texture[]
+    + GetFrame() : Texture
+    + NextFrame()
 }
 
 class Power{
 
 }
 
-Game "1" --* "1" Word
-Game "1" --* "1" Draw
-Game "1" --> "1" Player
+Game "1" o-- "1" Word
+Game "1" *-- "1" Player
 Game "1" o-- "0..*" Power 
-Player "1" <-- "0..*" Power
-Game "1" <-- "0..*" Accused 
+Player "1" -- "0..*" Power
+Game "1" -- "0..*" Accused
+
+Word *-- Difficulty
 
 @enduml
