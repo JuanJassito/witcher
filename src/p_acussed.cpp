@@ -7,6 +7,7 @@ int main() {
     imageGenerator ig;
 
     Accused accused(ng, ig);
+    Accused acc2(ng,ig); 
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Generador de Acusados");
 
@@ -34,14 +35,14 @@ int main() {
 
     sf::Text nameText;
     nameText.setFont(font);
-    nameText.setString("Nombre: " + accused.getName());
+    nameText.setString("Name: " + accused.getName());
     nameText.setCharacterSize(24);
     nameText.setFillColor(sf::Color::White);
     nameText.setPosition(100, 50);
 
     sf::Text genderText;
     genderText.setFont(font);
-    genderText.setString("Genero: " + accused.getGenderString());
+    genderText.setString("Gender: " + accused.getGenderString());
     genderText.setCharacterSize(24);
     genderText.setFillColor(sf::Color::White);
     genderText.setPosition(100, 100);
@@ -49,10 +50,18 @@ int main() {
     std::string reason = accused.getReason();
     sf::Text reasonText;
     reasonText.setFont(font);
-    reasonText.setString(reason);
+    reasonText.setString("Reason: "+reason);
     reasonText.setCharacterSize(24);
     reasonText.setFillColor(sf::Color::White);
     reasonText.setPosition(100, 150);
+
+    std::string witch = accused.getWitchString();
+    sf::Text witchText;
+    witchText.setFont(font);
+    witchText.setString(accused.getWitchString());
+    witchText.setCharacterSize(24);
+    witchText.setFillColor(sf::Color::White);
+    witchText.setPosition(100, 190);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -66,6 +75,7 @@ int main() {
         window.draw(nameText);
         window.draw(genderText);
         window.draw(reasonText);
+        window.draw(witchText);
         window.display();
     }
 

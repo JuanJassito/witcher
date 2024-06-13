@@ -3,9 +3,13 @@
 #include <SFML/Audio.hpp> // sfml library
 #include <iostream>
 #include <Word.hpp> //library write by us to use the words
+#include <TextInput.hpp>
 
 //? this is the main, have prubes of the sfml library
 int main(){
+    TextInput textInput;
+
+
 //** initialize screen
     sf::RenderWindow window (sf::VideoMode(768, 768), "THE HANGER WITCH", sf::Style::Close | sf::Style::Resize);
     sf::RectangleShape player(sf::Vector2f(100.0f,100.0f));
@@ -55,50 +59,54 @@ int main(){
 //** things to do if the window is open
     while(window.isOpen()){
         sf::Event evnt;
-        
-
-        while(window.pollEvent(evnt)){
+        while (window.pollEvent(evnt))
+        {
             switch (evnt.type)
             {
             case sf::Event::Closed:
                 window.close();
                 break;
             case sf::Event::Resized:
-                std:: cout << evnt.size.width << evnt.size.height << std::endl;
+                std::cout << evnt.size.width << evnt.size.height << std::endl;
                 break;
             case sf::Event::TextEntered:
-                if(evnt.text.unicode < 128){
-                    printf("%c", evnt.text.unicode); 
-                }
+                textInput.OnInput(evnt.text.unicode);
+                cout << textInput.GetText() << std::endl;
                 break;
-
             default:
                 break;
             }
+
+            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
+            // {
+            //     player.move(-0.5f, 0.0f);
+            // }
+            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
+            // {
+            //     player.move(0.5f, 0.0f);
+            // }
+            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
+            // {
+            //     player.move(0.0f, -0.5f);
+            // }
+            // if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
+            // {
+            //     player.move(0.0f, 0.5f);
+            // }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            {
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                player.setPosition((float)mousePos.x, static_cast<float>(mousePos.y));
+            }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Right))
+            {
+                text2.setFillColor(color);
+                window.draw(text2);
+            }
         }
 
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)){
-            player.move(-0.5f, 0.0f);
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)){
-            player.move(0.5f, 0.0f);
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)){
-            player.move(0.0f, -0.5f);
-        }
-        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)){
-            player.move(0.0f, 0.5f);
-        }
-
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-            player.setPosition((float)mousePos.x, static_cast<float>(mousePos.y));
-        }
-
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Right)){
-            text2.setFillColor(color);
-            window.draw(text2);
-        }
 //** this is for show the window 
         window.clear();
         window.draw(text);//first layer
