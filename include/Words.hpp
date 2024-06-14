@@ -1,5 +1,4 @@
-#ifndef WORD_HPP
-#define WORD_HPP
+#pragma once
 
 #include "Generator.hpp"
 
@@ -19,4 +18,3 @@ public:
     }
 };
 
-#endif // WORD_HPP
