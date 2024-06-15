@@ -1,61 +1,32 @@
 #pragma once
-#include <iostream>
-#include <fstream>
-#include <vector>
-#include <random>
-#include <ctime>
 #include <string>
-#include <filesystem>
-#include "Generator.hpp"
 
 class Accused {
 private:
-    std::string name;
     int gender;
-    std::string imagePath;
-    std::string reason;
     int witch;
+    std::string name;
+    std::string reasons;
 
 public:
-    Accused(numGenerator& ng, imageGenerator& ig) {
-        gender = ng.generate();
-        witch = ng.generate();
+    // Constructor predeterminado
+    Accused() : gender(0), witch(0), name("Unknown"), reasons("No reasons provided") {}
 
-        std::string nameFile = gender == 0 ? "./assets/text/m_names.txt" : "./assets/text/w_names.txt";
-        textGenerator nameGen(nameFile);
-        name = nameGen.readText();
+    // Constructor con argumentos
+    Accused(int gender, int witch, std::string name, std::string reasons) 
+        : gender(gender), witch(witch), name(name), reasons(reasons) {}
 
-        imagePath = ig.generateImage(gender);
-
-        textGenerator reasonGen("./assets/text/reasons.txt");
-        reason = reasonGen.readText();
-    }
-
-    std::string getName() const {
-        return name;
-    }
-
-    int getGender() const {
-        return gender;
-    }
+    // Métodos para obtener datos del acusado
+    int getGender() const { return gender; }
+    int getWitch() const { return witch; }
+    std::string getName() const { return name; }
+    std::string getReasons() const { return reasons; }
 
     std::string getGenderString() const {
-        return gender == 0 ? "Man" : "Woman";
-    }
-
-    std::string getImagePath() const {
-        return imagePath;
-    }
-
-    std::string getReason() const {
-        return reason;
-    }
-
-    int getWitch() const {
-        return witch;
+        return (gender == 0) ? "Male" : "Female";
     }
 
     std::string getWitchString() const {
-        return witch == 0 ? "Witch" : "Not Witch";
+        return (witch == 0) ? "Yes" : "No";
     }
 };

@@ -64,6 +64,19 @@ class Word {
     + getWordLength(word: const std::string&): size_t
 }
 
+class Player {
+    - name: std::string
+    - score: int
+    
+    + Player(playerName: const std::string&, initialScore: int = 0)
+    + setScore(newScore: int): void
+    + getScore(): int
+    + saveToFile(filename: const std::string&) const: bool
+    + loadFromFile(filename: const std::string&): std::vector<Player>
+    + getName(): std::string
+    + compareName(playerName: const std::string&): bool
+}
+
 Word --> textGenerator
 Hangman --> Word
 Accused --> textGenerator

@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include "Hangman.hpp"
+#include <hanger.hpp>
 #include <thread>
 #include <chrono>
 

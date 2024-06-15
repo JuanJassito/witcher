@@ -1,134 +1,95 @@
 #pragma once
+
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <Acussed.hpp>
 #include "Generator.hpp"
 
 class AccusedManager {
 private:
-    std::vector<Accused> accusedList;
+    Accused accused;
     numGenerator& ng;
     imageGenerator& ig;
     sf::Font font;
-    int currentAccusedIndex;
-    sf::Clock clock;
-    bool displaySelectionPrompt;
-    bool showAccused;
-    sf::Clock showClock;
+    sf::Text nameText;
+    sf::Text genderText;
+    sf::Text reasonText;
+    sf::Text witchText;
+    sf::Sprite accusedSprite;
 
 public:
-    AccusedManager(numGenerator& ng, imageGenerator& ig) : ng(ng), ig(ig), currentAccusedIndex(0), displaySelectionPrompt(false), showAccused(false) {
+    AccusedManager(numGenerator& ng, imageGenerator& ig) : ng(ng), ig(ig) {
         if (!font.loadFromFile("./assets/fonts/Hamletornot.ttf")) {
             std::cerr << "Error: No se pudo cargar la fuente Hamletornot.ttf" << std::endl;
         }
 
-        // Crear una lista de objetos Accused
-        for (int i = 0; i < 4; ++i) {
-            accusedList.push_back(Accused(ng, ig));
-        }
-    }
+        // Generar datos del acusado
+        int gender = ng.generate();
+        int witch = ng.generate();
+        std::string nameFile = (gender == 0) ? "./assets/text/m_names.txt" : "./assets/text/w_names.txt";
+        textGenerator tg(nameFile);
+        std::string name = tg.readText();
+        std::string reasons = textGenerator("./assets/text/reasons.txt").readText();
 
-    void update() {
-        if (showAccused && showClock.getElapsedTime().asSeconds() >= 3.0f) {
-            showAccused = false;
-            displaySelectionPrompt = true;
-        }
+        // Inicializar el objeto Accused con los datos generados
+        accused = Accused(gender, witch, name, reasons);
 
-        if (!displaySelectionPrompt && !showAccused && clock.getElapsedTime().asSeconds() >= 2.0f) {
-            currentAccusedIndex = (currentAccusedIndex + 1) % accusedList.size();
-            if (currentAccusedIndex == 0) {
-                displaySelectionPrompt = true;
-            }
-            clock.restart();
-        }
-    }
-
-    void draw(sf::RenderWindow& window) {
-        if (displaySelectionPrompt) {
-            drawPrompt(window);
-        } else if (showAccused) {
-            drawAccused(window, accusedList[currentAccusedIndex]);
-        } else {
-            drawAccused(window, accusedList[currentAccusedIndex]);
-        }
-    }
-
-    void drawAccused(sf::RenderWindow& window, const Accused& accused) {
+        // Configurar el sprite del acusado
+        std::string imagePath = ig.generateImage(gender); // Obtener la ruta de la imagen del acusado
         sf::Texture texture;
-        if (!texture.loadFromFile(accused.getImagePath())) {
-            std::cerr << "Error: No se pudo cargar la imagen " << accused.getImagePath() << std::endl;
-            return;
+        if (!texture.loadFromFile(imagePath)) {
+            std::cerr << "Error: No se pudo cargar la imagen " << imagePath << std::endl;
         }
+        accusedSprite.setTexture(texture);
+        accusedSprite.setScale(0.5f, 0.5f); // Escalado del sprite según sea necesario
+        accusedSprite.setPosition(400, 200); // Posición del sprite en la ventana
 
-        sf::Sprite sprite;
-        sprite.setTexture(texture);
-        sprite.setPosition(100, 200);
-
-        sf::Vector2u textureSize = texture.getSize();
-        sprite.setScale(
-            400.0f / textureSize.x,
-            300.0f / textureSize.y
-        );
-
-        sf::Text nameText;
+        // Configurar los textos con datos del acusado
         nameText.setFont(font);
-        nameText.setString("Name: " + accused.getName());
         nameText.setCharacterSize(24);
         nameText.setFillColor(sf::Color::White);
         nameText.setPosition(100, 50);
 
-        sf::Text genderText;
         genderText.setFont(font);
-        genderText.setString("Gender: " + accused.getGenderString());
         genderText.setCharacterSize(24);
         genderText.setFillColor(sf::Color::White);
         genderText.setPosition(100, 100);
 
-        sf::Text reasonText;
         reasonText.setFont(font);
-        reasonText.setString("Reason: " + accused.getReason());
         reasonText.setCharacterSize(24);
         reasonText.setFillColor(sf::Color::White);
         reasonText.setPosition(100, 150);
 
-        sf::Text witchText;
         witchText.setFont(font);
-        witchText.setString(accused.getWitchString());
         witchText.setCharacterSize(24);
-        witchText.setFillColor(sf::Color::White);
         witchText.setPosition(100, 200);
+    }
 
-        window.draw(sprite);
+    void update() {
+        // Actualizar los textos con los datos del acusado actual
+        nameText.setString("Name: " + accused.getName());
+        genderText.setString("Gender: " + accused.getGenderString());
+        reasonText.setString("Reason: " + accused.getReasons());
+
+        // Configurar el color del texto de witch dependiendo del valor obtenido
+        if (accused.getWitch() == 0) {
+            witchText.setString("Witch: Yes");
+            witchText.setFillColor(sf::Color::Red);
+        } else if (accused.getWitch() == 1) {
+            witchText.setString("Witch: No");
+            witchText.setFillColor(sf::Color::Green);
+        }
+    }
+
+    void render(sf::RenderWindow& window) {
+        // Dibujar los textos y el sprite del acusado en la ventana
         window.draw(nameText);
         window.draw(genderText);
         window.draw(reasonText);
         window.draw(witchText);
+        window.draw(accusedSprite); // Dibujar el sprite del acusado
     }
 
-    void drawPrompt(sf::RenderWindow& window) {
-        sf::Text promptText;
-        promptText.setFont(font);
-        promptText.setString("Enter accused number (0-3): ");
-        promptText.setCharacterSize(24);
-        promptText.setFillColor(sf::Color::White);
-        promptText.setPosition(100, 50);
-        window.draw(promptText);
-    }
-
-    void setDisplaySelectionPrompt(bool value) {
-        displaySelectionPrompt = value;
-    }
-
-    void setShowAccused(bool value) {
-        showAccused = value;
-        showClock.restart();
-    }
-
-    void setCurrentAccusedIndex(int index) {
-        currentAccusedIndex = index;
-    }
-
-    const std::vector<Accused>& getAccusedList() const {
-        return accusedList;
+    Accused& getAccused() {
+        return accused;
     }
 };

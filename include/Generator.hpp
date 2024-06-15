@@ -64,6 +64,12 @@ public:
     }
 };
 
+#pragma once
+#include <iostream>
+#include <random>
+#include <ctime>
+#include <string>
+
 class imageGenerator {
 private:
     int numMenImages = 10; // Número de imágenes de hombres
