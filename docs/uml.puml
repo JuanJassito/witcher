@@ -1,0 +1,74 @@
+@startuml hanging
+
+class Accused {
+    - name: std::string
+    - gender: int
+    - imagePath: std::string
+    - reason: std::string
+    - witch: int
+
+    + Accused(ng: numGenerator&, ig: imageGenerator&)
+    + getName(): std::string
+    + getGender(): int
+    + getGenderString(): std::string
+    + getImagePath(): std::string
+    + getReason(): std::string
+    + getWitch(): int
+    + getWitchString(): std::string
+}
+
+class textGenerator {
+    - reading: std::vector<std::string>
+    
+    + textGenerator(filename: const std::string&)
+    + readText(): std::string
+}
+
+class numGenerator {
+    - min: int
+    - max: int
+    - rng: std::mt19937
+    
+    + numGenerator(min: int, max: int)
+    + generate(): int
+}
+
+class imageGenerator {
+    - numMenImages: int
+    - numWomenImages: int
+    
+    + imageGenerator()
+    + generateImage(gender: int): std::string
+}
+
+class Hangman {
+    - wordGenerator: Word
+    - wordToGuess: std::string
+    - guessedWord: std::string
+    - incorrectLetters: std::string
+    - lives: int
+    
+    + Hangman(wordsFile: const std::string&)
+    + guessLetter(letter: char): bool
+    + getGuessedWord(): std::string
+    + getIncorrectLetters(): std::string
+    + getLives(): int
+    + getWordToGuess(): std::string
+}
+
+class Word {
+    - generator: textGenerator
+    
+    + Word(filename: const std::string&)
+    + generateWord(): std::string
+    + getWordLength(word: const std::string&): size_t
+}
+
+Word --> textGenerator
+Hangman --> Word
+Accused --> textGenerator
+Accused --> imageGenerator
+Accused --> numGenerator
+
+
+@enduml
