@@ -13,18 +13,22 @@ private:
     std::string name;
     int gender;
     std::string imagePath;
-    std::string reasons;
-    int witch; 
+    std::string reason;
+    int witch;
 
 public:
     Accused(numGenerator& ng, imageGenerator& ig) {
         gender = ng.generate();
         witch = ng.generate();
+
         std::string nameFile = gender == 0 ? "./assets/text/m_names.txt" : "./assets/text/w_names.txt";
-        textGenerator tg(nameFile);
-        name = tg.readText();
+        textGenerator nameGen(nameFile);
+        name = nameGen.readText();
+
         imagePath = ig.generateImage(gender);
-        reasons = textGenerator("./assets/text/reasons.txt").readText();
+
+        textGenerator reasonGen("./assets/text/reasons.txt");
+        reason = reasonGen.readText();
     }
 
     std::string getName() const {
@@ -44,15 +48,14 @@ public:
     }
 
     std::string getReason() const {
-        std::cout<<reasons<<std::endl;
-        return reasons;
+        return reason;
     }
 
-    int getWitch()const{
+    int getWitch() const {
         return witch;
     }
 
-    std::string getWitchString() const{
+    std::string getWitchString() const {
         return witch == 0 ? "Witch" : "Not Witch";
     }
 };
