@@ -9,7 +9,7 @@ using namespace std;
 
 int main(int argc, char const *argv[]){
 // Crear la ventana de SFML
-    sf::RenderWindow window(sf::VideoMode(800, 600), "GAME PROTOTYPE");
+    sf::RenderWindow window(sf::VideoMode(800, 650), "GAME PROTOTYPE");
 
 //hanger.hpp
     Hangman game("./assets/text/easy.txt"); //create teh game from hanger.hpp
@@ -29,8 +29,29 @@ int main(int argc, char const *argv[]){
         return 1;
     }
     sf::Sprite accusedSprite(texture);
-    accusedSprite.setScale(0.2f, 0.2f);  // Escalar el sprite si es necesario
-    accusedSprite.setPosition(-50, 100);  // Ejemplo de posición fija
+    accusedSprite.setScale(0.25f, 0.25f);  // Escalar el sprite si es necesario
+    accusedSprite.setPosition(-100, 150);  // Ejemplo de posición fija
+// fondo
+    sf::Texture back;
+    back.loadFromFile("./assets/images/elements/fondo_p.png");
+    sf::Sprite bg(back);
+    bg.setScale(0.4f,0.4f);
+    bg.setPosition(
+        (window.getSize().x - bg.getGlobalBounds().width) / 2,
+        (window.getSize().y - bg.getGlobalBounds().height) / 2
+    );
+// banquito
+    sf::Texture sit;
+    sit.loadFromFile("./assets/images/elements/banco.png");
+    sf::Sprite bench(sit);
+    bench.setScale(0.09f,0.09f);
+    bench.setPosition(70,450);
+// arbol
+    sf::Texture tree;
+    tree.loadFromFile("./assets/images/elements/arbol.png");
+    sf::Sprite tb(tree);
+    tb.setScale(0.3f,0.3f);
+    tb.setPosition(-200,-50);
 
 //fuente
     sf::Font font;
@@ -42,44 +63,48 @@ int main(int argc, char const *argv[]){
 //creacion de los datos del acusado
     sf::Text nameText;
     nameText.setFont(font);
-    nameText.setCharacterSize(18);
-    nameText.setFillColor(sf::Color::White);
+    nameText.setCharacterSize(20);
+    nameText.setFillColor(sf::Color::Black);
     nameText.setString("Name: " + accusedManager.getAccused().getName());
-    nameText.setPosition(400, 50);  // Posición fija para el nombre
+    nameText.setPosition(350, 50);  // Posición fija para el nombre
 
     sf::Text genderText;
     genderText.setFont(font);
-    genderText.setCharacterSize(18);
-    genderText.setFillColor(sf::Color::White);
+    genderText.setCharacterSize(20);
+    genderText.setFillColor(sf::Color::Black);
     genderText.setString("Gender: " + accusedManager.getAccused().getGenderString());
-    genderText.setPosition(400, 100);  // Posición fija para el género
+    genderText.setPosition(350, 100);  // Posición fija para el género
 
     sf::Text reasonText;
     reasonText.setFont(font);
-    reasonText.setCharacterSize(18);
-    reasonText.setFillColor(sf::Color::White);
+    reasonText.setCharacterSize(20);
+    reasonText.setFillColor(sf::Color::Black);
     reasonText.setString("Reason: " + accusedManager.getAccused().getReasons());
-    reasonText.setPosition(400, 150);  // Posición fija para la razón
+    reasonText.setPosition(350, 150);  // Posición fija para la razón
 
     sf::Text witchText;
     witchText.setFont(font);
-    witchText.setCharacterSize(18);
-    witchText.setFillColor(sf::Color::White);
+    witchText.setCharacterSize(20);
+    witchText.setFillColor(sf::Color::Black);
     witchText.setString("Witch: " + accusedManager.getAccused().getWitchString());
-    witchText.setPosition(400, 200);  // Posición fija para el estatus de bruja
+    witchText.setPosition(350, 200);  // Posición fija para el estatus de bruja
 
 // crear las instancias del juego
     sf::Text guessedWordText(game.getGuessedWord(), font, 22);
-    guessedWordText.setPosition(400, 400);
+    guessedWordText.setFillColor(sf::Color::Black);
+    guessedWordText.setPosition(350, 350);
 
     sf::Text incorrectLettersText("Incorrect Letters: ", font, 22);
-    incorrectLettersText.setPosition(400, 450);
+    incorrectLettersText.setFillColor(sf::Color::Black);
+    incorrectLettersText.setPosition(350, 400);
 
     sf::Text livesText("Lives: " + std::to_string(game.getLives()), font, 22);
-    livesText.setPosition(400, 500);
+    livesText.setFillColor(sf::Color::Black);
+    livesText.setPosition(350, 450);
 
     bool gameOver = false;
     sf::Text resultText("", font, 30);
+    resultText.setFillColor(sf::Color::Red);
     resultText.setPosition(0, 0);
 
 //bucle de la ventana sfml
@@ -102,7 +127,12 @@ while (window.isOpen()) {
             }
         }
 
-        window.clear();
+        window.clear(sf::Color(161, 130, 98, 255));
+        // fondo
+        window.draw(bg);
+        window.draw(tb);
+        window.draw(bench);
+        
         ///juego 
         window.draw(guessedWordText);
         window.draw(incorrectLettersText);
