@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -6,12 +7,14 @@
 #include <hanger.hpp>
 #include <AcussedManager.hpp>
 
+
 enum GameState { MAIN_MENU, ENTER_NAME, DIFFICULTY_SELECTION, PLAYING, EXIT };
 
 std::string playerName;
 GameState currentState = MAIN_MENU;
 std::string difficultyMessage;
 int diffucult;
+int score;
 
 void drawMainMenu(sf::RenderWindow& window, sf::Font& font);
 void drawEnterNameMenu(sf::RenderWindow& window, sf::Font& font);
@@ -23,7 +26,36 @@ void handleDifficultyMenuEvent(sf::RenderWindow& window, sf::Event& event);
 void handlePlayingEvent(sf::RenderWindow& window, sf::Event& event);
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Menu System");
+    sf::Music music;
+    numGenerator nm(0,4);
+    int mus = nm.generate();
+    switch (mus)
+    {
+    case 0:
+        music.openFromFile("./assets/sounds/b_de_bellako.ogg");
+        break;
+    case 1:
+        music.openFromFile("./assets/sounds/crazy_frog.ogg");
+        break;
+    case 2:
+        music.openFromFile("./assets/sounds/hey_brother.ogg");
+        break;
+
+    case 3:
+        music.openFromFile("./assets/sounds/nueva_vida.ogg");
+        break;
+
+    case 4:
+        music.openFromFile("./assets/sounds/Toothless.ogg");
+        break;
+
+    default:
+        music.openFromFile("./assets/sounds/el_gavilan.ogg");
+        break;
+    }
+    music.play();
+
+    sf::RenderWindow window(sf::VideoMode(800, 600), "HANGMAN");
     sf::Font font;
     if (!font.loadFromFile("./assets/fonts/Hamletornot.ttf")) {
         std::cerr << "Failed to load font" << std::endl;
@@ -80,40 +112,104 @@ int main() {
 }
 
 void drawMainMenu(sf::RenderWindow& window, sf::Font& font) {
+    sf::Text tittle("Hangman The Game", font, 50);
+    tittle.setColor(sf::Color::Black);
+    tittle.setPosition(150, 100);
+
+    sf::Texture back;
+    back.loadFromFile("./assets/images/elements/fondo_p.png");
+    sf::Sprite bg(back);
+    bg.setScale(0.4f, 0.4f);
+    bg.setPosition(
+        (window.getSize().x - bg.getGlobalBounds().width) / 2,
+        (window.getSize().y - bg.getGlobalBounds().height) / 2
+    );
+
+    sf::Texture tree;
+    tree.loadFromFile("./assets/images/elements/arbol.png");
+    sf::Sprite tb(tree);
+    tb.setScale(0.3f, 0.3f);
+    tb.setPosition(-200, -50);
+
+
+    
     sf::Text playText("Play", font, 30);
+    playText.setColor(sf::Color::Black);
     playText.setPosition(350, 200);
 
     sf::Text exitText("Exit", font, 30);
+    exitText.setColor(sf::Color::Red);
     exitText.setPosition(350, 300);
 
+    window.draw(bg);
+    window.draw(tb);
+    window.draw(tittle);
     window.draw(playText);
     window.draw(exitText);
 }
 
 void drawEnterNameMenu(sf::RenderWindow& window, sf::Font& font) {
     sf::Text namePrompt("Enter your name:", font, 30);
+    namePrompt.setFillColor(sf::Color::Black);
     namePrompt.setPosition(200, 200);
 
     sf::Text nameText(playerName, font, 30);
+    nameText.setFillColor(sf::Color::Black);
     nameText.setPosition(200, 300);
 
+    sf::Texture back;
+    back.loadFromFile("./assets/images/elements/fondo_p.png");
+    sf::Sprite bg(back);
+    bg.setScale(0.4f, 0.4f);
+    bg.setPosition(
+        (window.getSize().x - bg.getGlobalBounds().width) / 2,
+        (window.getSize().y - bg.getGlobalBounds().height) / 2
+    );
+    sf::Texture tree;
+    tree.loadFromFile("./assets/images/elements/arbol.png");
+    sf::Sprite tb(tree);
+    tb.setScale(0.3f, 0.3f);
+    tb.setPosition(-200, -50);
+
+    window.draw(bg);
+    window.draw(tb);
     window.draw(namePrompt);
     window.draw(nameText);
 }
 
 void drawDifficultyMenu(sf::RenderWindow& window, sf::Font& font) {
     sf::Text easyText("Easy", font, 30);
+    easyText.setColor(sf::Color::Black);
     easyText.setPosition(350, 200);
 
     sf::Text mediumText("Medium", font, 30);
+    mediumText.setColor(sf::Color::Black);
     mediumText.setPosition(350, 300);
 
     sf::Text hardText("Hard", font, 30);
+    hardText.setColor(sf::Color::Black);
     hardText.setPosition(350, 400);
 
     sf::Text exitText("Exit", font, 30);
+    exitText.setColor(sf::Color::Red);
     exitText.setPosition(350, 500);
 
+    sf::Texture back;
+    back.loadFromFile("./assets/images/elements/fondo_p.png");
+    sf::Sprite bg(back);
+    bg.setScale(0.4f, 0.4f);
+    bg.setPosition(
+        (window.getSize().x - bg.getGlobalBounds().width) / 2,
+        (window.getSize().y - bg.getGlobalBounds().height) / 2
+    );
+    sf::Texture tree;
+    tree.loadFromFile("./assets/images/elements/arbol.png");
+    sf::Sprite tb(tree);
+    tb.setScale(0.3f, 0.3f);
+    tb.setPosition(-200, -50);
+
+    window.draw(bg);
+    window.draw(tb);
     window.draw(easyText);
     window.draw(mediumText);
     window.draw(hardText);
@@ -130,9 +226,16 @@ void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font) {
         diff = "./assets/text/hard.txt";
     }
 
-    sf::Text playerText(playerName, font, 24);
-    playerText.setPosition(0, 0);
+    sf::Text playerText(playerName, font, 28);
+    playerText.setPosition(520, 500);
+    playerText.setColor(sf::Color::Red);
     window.draw(playerText);
+
+    std::string sscore = std::to_string(score);
+    sf::Text sc(sscore, font, 30);
+    sc.setPosition(520,535);
+    sc.setColor(sf::Color::Red);
+    window.draw(sc);
 
     // hanger.hpp
 
@@ -264,9 +367,15 @@ void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font) {
         window.draw(witchText);
 
         window.draw(playerText);
+        window.draw(sc);
 
         if (game.getGuessedWord() == game.getWordToGuess()) {
             resultText.setString("Congratulations! You guessed the word: " + game.getWordToGuess());
+            int multi = 10*(game.getLives());
+            std::cout<<multi;
+            score = score + 100 + multi;
+            multi = 0;
+
             window.draw(resultText);
             window.display();
             std::this_thread::sleep_for(std::chrono::seconds(3));
