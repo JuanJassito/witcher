@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
@@ -8,26 +10,35 @@
 
 enum GameState { MAIN_MENU, ENTER_NAME, DIFFICULTY_SELECTION, PLAYING, EXIT };
 
-std::string playerName;
-GameState currentState = MAIN_MENU;
-std::string difficultyMessage;
-int diffucult;
+class MenuSystem {
+public:
+    MenuSystem();
+    void run();
 
-void drawMainMenu(sf::RenderWindow& window, sf::Font& font);
-void drawEnterNameMenu(sf::RenderWindow& window, sf::Font& font);
-void drawDifficultyMenu(sf::RenderWindow& window, sf::Font& font);
-void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font);
-void handleMainMenuEvent(sf::RenderWindow& window, sf::Event& event);
-void handleEnterNameEvent(sf::RenderWindow& window, sf::Event& event);
-void handleDifficultyMenuEvent(sf::RenderWindow& window, sf::Event& event);
-void handlePlayingEvent(sf::RenderWindow& window, sf::Event& event);
+private:
+    void drawMainMenu(sf::RenderWindow& window, sf::Font& font);
+    void drawEnterNameMenu(sf::RenderWindow& window, sf::Font& font);
+    void drawDifficultyMenu(sf::RenderWindow& window, sf::Font& font);
+    void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font);
+    void handleMainMenuEvent(sf::RenderWindow& window, sf::Event& event);
+    void handleEnterNameEvent(sf::RenderWindow& window, sf::Event& event);
+    void handleDifficultyMenuEvent(sf::RenderWindow& window, sf::Event& event);
+    void handlePlayingEvent(sf::RenderWindow& window, sf::Event& event);
 
-int main() {
+    std::string playerName;
+    GameState currentState;
+    std::string difficultyMessage;
+};
+
+MenuSystem::MenuSystem()
+    : playerName(""), currentState(MAIN_MENU), difficultyMessage("") {}
+
+void MenuSystem::run() {
     sf::RenderWindow window(sf::VideoMode(800, 600), "Menu System");
     sf::Font font;
     if (!font.loadFromFile("./assets/fonts/Hamletornot.ttf")) {
         std::cerr << "Failed to load font" << std::endl;
-        return -1;
+        return;
     }
 
     while (window.isOpen()) {
@@ -75,11 +86,9 @@ int main() {
         }
         window.display();
     }
-
-    return 0;
 }
 
-void drawMainMenu(sf::RenderWindow& window, sf::Font& font) {
+void MenuSystem::drawMainMenu(sf::RenderWindow& window, sf::Font& font) {
     sf::Text playText("Play", font, 30);
     playText.setPosition(350, 200);
 
@@ -90,7 +99,7 @@ void drawMainMenu(sf::RenderWindow& window, sf::Font& font) {
     window.draw(exitText);
 }
 
-void drawEnterNameMenu(sf::RenderWindow& window, sf::Font& font) {
+void MenuSystem::drawEnterNameMenu(sf::RenderWindow& window, sf::Font& font) {
     sf::Text namePrompt("Enter your name:", font, 30);
     namePrompt.setPosition(200, 200);
 
@@ -101,7 +110,7 @@ void drawEnterNameMenu(sf::RenderWindow& window, sf::Font& font) {
     window.draw(nameText);
 }
 
-void drawDifficultyMenu(sf::RenderWindow& window, sf::Font& font) {
+void MenuSystem::drawDifficultyMenu(sf::RenderWindow& window, sf::Font& font) {
     sf::Text easyText("Easy", font, 30);
     easyText.setPosition(350, 200);
 
@@ -120,23 +129,9 @@ void drawDifficultyMenu(sf::RenderWindow& window, sf::Font& font) {
     window.draw(exitText);
 }
 
-void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font) {
-    std::string diff;
-    if(diffucult==0){
-        diff = "./assets/text/easy.txt";
-    }else if(diffucult==1){
-        diff = "./assets/text/medium.txt";
-    }else if(diffucult==2){
-        diff = "./assets/text/hard.txt";
-    }
-
-    sf::Text playerText(playerName, font, 24);
-    playerText.setPosition(0, 0);
-    window.draw(playerText);
-
+void MenuSystem::drawPlayingScreen(sf::RenderWindow& window, sf::Font& font) {
     // hanger.hpp
-
-    Hangman game(diff); // crear el juego desde hanger.hpp
+    Hangman game("./assets/text/easy.txt"); // crear el juego desde hanger.hpp
 
     // instances numGenerator and imageGenerator
     numGenerator ng(0, 1);  // Ejemplo de creación de numGenerator
@@ -263,8 +258,6 @@ void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font) {
         window.draw(reasonText);
         window.draw(witchText);
 
-        window.draw(playerText);
-
         if (game.getGuessedWord() == game.getWordToGuess()) {
             resultText.setString("Congratulations! You guessed the word: " + game.getWordToGuess());
             window.draw(resultText);
@@ -281,12 +274,11 @@ void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font) {
         window.draw(resultText);
         window.display();
         std::this_thread::sleep_for(std::chrono::seconds(3));
-        //window.close();
-        currentState = DIFFICULTY_SELECTION;
+        window.close();
     }
 }
 
-void handleMainMenuEvent(sf::RenderWindow& window, sf::Event& event) {
+void MenuSystem::handleMainMenuEvent(sf::RenderWindow& window, sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
@@ -301,7 +293,7 @@ void handleMainMenuEvent(sf::RenderWindow& window, sf::Event& event) {
     }
 }
 
-void handleEnterNameEvent(sf::RenderWindow& window, sf::Event& event) {
+void MenuSystem::handleEnterNameEvent(sf::RenderWindow& window, sf::Event& event) {
     if (event.type == sf::Event::TextEntered) {
         if (event.text.unicode == '\b') { // Handle backspace
             if (!playerName.empty())
@@ -314,23 +306,20 @@ void handleEnterNameEvent(sf::RenderWindow& window, sf::Event& event) {
     }
 }
 
-void handleDifficultyMenuEvent(sf::RenderWindow& window, sf::Event& event) {
+void MenuSystem::handleDifficultyMenuEvent(sf::RenderWindow& window, sf::Event& event) {
     if (event.type == sf::Event::MouseButtonPressed) {
         if (event.mouseButton.button == sf::Mouse::Left) {
             sf::Vector2i mousePos = sf::Mouse::getPosition(window);
             if (mousePos.x >= 350 && mousePos.x <= 450) {
                 if (mousePos.y >= 200 && mousePos.y <= 230) {
                     difficultyMessage = "You selected Easy";
-                    diffucult = 0;
                     currentState = PLAYING;
                 } else if (mousePos.y >= 300 && mousePos.y <= 330) {
                     difficultyMessage = "You selected Medium";
-                    diffucult = 1;
                     currentState = PLAYING;
                 } else if (mousePos.y >= 400 && mousePos.y <= 430) {
                     difficultyMessage = "You selected Hard";
                     currentState = PLAYING;
-                    diffucult = 2;
                 } else if (mousePos.y >= 500 && mousePos.y <= 530) {
                     currentState = MAIN_MENU;
                 }
@@ -339,8 +328,14 @@ void handleDifficultyMenuEvent(sf::RenderWindow& window, sf::Event& event) {
     }
 }
 
-void handlePlayingEvent(sf::RenderWindow& window, sf::Event& event) {
+void MenuSystem::handlePlayingEvent(sf::RenderWindow& window, sf::Event& event) {
     if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Enter) {
         currentState = DIFFICULTY_SELECTION;
     }
+}
+
+int main() {
+    MenuSystem menuSystem;
+    menuSystem.run();
+    return 0;
 }
