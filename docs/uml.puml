@@ -64,24 +64,97 @@ class Word {
     + getWordLength(word: const std::string&): size_t
 }
 
-class Player {
-    - name: std::string
-    - score: int
-    
-    + Player(playerName: const std::string&, initialScore: int = 0)
-    + setScore(newScore: int): void
-    + getScore(): int
-    + saveToFile(filename: const std::string&) const: bool
-    + loadFromFile(filename: const std::string&): std::vector<Player>
-    + getName(): std::string
-    + compareName(playerName: const std::string&): bool
+class GamePrototype {
+    - sf::RenderWindow window
+    - sf::Font font
+    - Hangman game
+    - AccusedManager accusedManager
+    - numGenerator ng
+    - imageGenerator ig
+    - sf::Texture texture
+    - sf::Sprite accusedSprite
+    - sf::Texture backgroundTexture
+    - sf::Sprite backgroundSprite
+    - sf::Texture benchTexture
+    - sf::Sprite benchSprite
+    - sf::Texture treeTexture
+    - sf::Sprite treeSprite
+    - sf::Text nameText
+    - sf::Text genderText
+    - sf::Text reasonText
+    - sf::Text witchText
+    - sf::Text guessedWordText
+    - sf::Text incorrectLettersText
+    - sf::Text livesText
+    - sf::Text resultText
+    + GamePrototype()
+    + run()
+    - initialize()
+    - loadAssets()
+    - setupSprites()
+    - setupTexts()
+    - resetGame()
+    - gameLoop()
+    - processEvents()
+    - update()
+    - render()
+    - handleInput(enteredChar: char)
 }
 
-Word --> textGenerator
-Hangman --> Word
-Accused --> textGenerator
-Accused --> imageGenerator
-Accused --> numGenerator
+enum GameState {
+    MAIN_MENU
+    ENTER_NAME
+    DIFFICULTY_SELECTION
+    PLAYING
+    EXIT
+}
 
+class MenuSystem {
+    - std::string playerName
+    - GameState currentState
+    - std::string difficultyMessage
+    + MenuSystem()
+    + run()
+    - drawMainMenu(window: sf::RenderWindow&, font: sf::Font&)
+    - drawEnterNameMenu(window: sf::RenderWindow&, font: sf::Font&)
+    - drawDifficultyMenu(window: sf::RenderWindow&, font: sf::Font&)
+    - drawPlayingScreen(window: sf::RenderWindow&, font: sf::Font&)
+    - handleMainMenuEvent(window: sf::RenderWindow&, event: sf::Event&)
+    - handleEnterNameEvent(window: sf::RenderWindow&, event: sf::Event&)
+    - handleDifficultyMenuEvent(window: sf::RenderWindow&, event: sf::Event&)
+    - handlePlayingEvent(window: sf::RenderWindow&, event: sf::Event&)
+}
+
+class AccusedManager {
+    - Accused accused
+    - numGenerator& ng
+    - imageGenerator& ig
+    - sf::Font font
+    - sf::Text nameText
+    - sf::Text genderText
+    - sf::Text reasonText
+    - sf::Text witchText
+    - sf::Sprite accusedSprite
+    + AccusedManager(ng: numGenerator&, ig: imageGenerator&)
+    + update()
+    + render(window: sf::RenderWindow&)
+    + getAccused(): Accused&
+}
+
+Word "1.." <|-- "1" textGenerator
+
+Hangman "1" --* "1" Word
+
+Accused "1" o-- "1" textGenerator
+
+GamePrototype "1" --|> "1" Hangman
+GamePrototype "1" --|> "1" AccusedManager
+GamePrototype "1" --|> "1" MenuSystem
+
+MenuSystem "1" --|> "5" GameState
+
+AccusedManager "1" *-- "1.." Accused 
+AccusedManager "1" o-- "1" numGenerator 
+AccusedManager "1" o-- "1" imageGenerator 
 
 @enduml
