@@ -50,9 +50,9 @@ In this case we use design patterns such as the Factory for the creation of the 
 The hangman game is an exciting and challenging experience that entertainingly simulates the trials and punishments of the Middle Ages. In this game, the player must guess a hidden word before the drawing of a hanged figure is completed, representing the tragic fate of those who failed to defend themselves adequately in times past.
 
 The game offers three levels of difficulty to tailor the experience to the player's skill level:
-- Easy: The words are common and relatively short, and the player has more attempts to guess the word before the drawing is completed.
-- Medium: The words are of medium length and less commonly used, with a moderate number of attempts available.
-- Hard: The words are long and rare, and the player has fewer attempts, presenting a true challenge for those with an extensive vocabulary and deductive skills.
+- Easy: The words are common and relatively short.
+- Medium: The words are of medium length and less commonly used.
+- Hard: The words are long and rare, presenting a true challenge for those with an extensive vocabulary and deductive skills.
 
 The game is hand-drawn, with an aesthetic that evokes the times of the Middle Ages. Every element, from the letters to the hangman figure itself, has been illustrated in detail to immerse the player in the historical atmosphere. The hand-drawn art not only adds a unique and personal touch to the game but also enhances the overall immersion and player experience.
 Immerse yourself in this historical experience and test your wits and vocabulary in a hangman game that combines the thrill of the challenge with art and history. Can you save the character from their tragic fate by guessing the word in time? Find out as you play!

@@ -35,7 +35,7 @@ int main() {
         music.openFromFile("./assets/sounds/b_de_bellako.ogg");
         break;
     case 1:
-        music.openFromFile("./assets/sounds/crazy_frog.ogg");
+        music.openFromFile("./assets/sounds/crazy_forg.ogg");
         break;
     case 2:
         music.openFromFile("./assets/sounds/hey_brother.ogg");
@@ -373,9 +373,15 @@ void drawPlayingScreen(sf::RenderWindow& window, sf::Font& font) {
             resultText.setString("Congratulations! You guessed the word: " + game.getWordToGuess());
             int multi = 10*(game.getLives());
             std::cout<<multi;
-            score = score + 100 + multi;
-            multi = 0;
-
+            
+            if(accusedManager.getAccused().getWitch() == 0){
+                std::cout<<accusedManager.getAccused().getWitch();
+                score = score + 100;
+            }else{
+                std::cout<<accusedManager.getAccused().getWitch();
+                score = score + 100 + multi;
+                multi = 0;
+            }
             window.draw(resultText);
             window.display();
             std::this_thread::sleep_for(std::chrono::seconds(3));
